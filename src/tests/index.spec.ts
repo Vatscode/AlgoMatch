@@ -1,5 +1,34 @@
 import request from 'supertest';
+import { Express } from 'express';
 import { app, TICKER } from '../index';
+
+interface OrderRequest {
+  type: 'limit';
+  side: 'bid' | 'ask';
+  price: number;
+  quantity: number;
+  userId: string;
+}
+
+interface BalanceResponse {
+  balances: {
+    [TICKER]: number;
+    USD: number;
+  };
+}
+
+interface DepthResponse {
+  depth: {
+    [price: string]: {
+      quantity: number;
+      type: 'bid' | 'ask';
+    };
+  };
+}
+
+interface FilledQuantityResponse {
+  filledQuantity: number;
+}
 
 describe('Basic tests', () => {
   it('verify initial balances', async () => {
@@ -14,58 +43,62 @@ describe('Basic tests', () => {
 
   it('Can create orders', async () => {
     console.log('Placing bid order');
-    await request(app).post('/order').send({
+    const bidOrder: OrderRequest = {
       type: 'limit',
       side: 'bid',
       price: 1400.1,
       quantity: 1,
       userId: '1',
-    });
+    };
+    await request(app).post('/order').send(bidOrder);
 
     console.log('Placing ask order for 1400.9');
-    await request(app).post('/order').send({
+    const askOrder1: OrderRequest = {
       type: 'limit',
       side: 'ask',
       price: 1400.9,
       quantity: 10,
       userId: '2',
-    });
+    };
+    await request(app).post('/order').send(askOrder1);
 
     console.log('Placing ask order for 1501');
-    await request(app).post('/order').send({
+    const askOrder2: OrderRequest = {
       type: 'limit',
       side: 'ask',
       price: 1501,
       quantity: 5,
       userId: '2',
-    });
+    };
+    await request(app).post('/order').send(askOrder2);
 
-    let res = await request(app).get('/depth').send();
+    const res = await request(app).get('/depth').send();
     console.log('Orderbook depth:', res.body.depth);
     expect(res.status).toBe(200);
     expect(res.body.depth['1501'].quantity).toBe(5);
   });
 
   it('ensures balances are still the same', async () => {
-    let res = await request(app).get('/balance/1').send();
+    const res = await request(app).get('/balance/1').send();
     console.log('Balance for user 1 after order:', res.body.balances);
     expect(res.body.balances[TICKER]).toBe(10);
   });
 
   it('Places an order that fills', async () => {
-    let res = await request(app).post('/order').send({
+    const fillOrder: OrderRequest = {
       type: 'limit',
       side: 'bid',
       price: 1502,
       quantity: 2,
       userId: '1',
-    });
+    };
+    const res = await request(app).post('/order').send(fillOrder);
     console.log('Filled quantity:', res.body.filledQuantity);
     expect(res.body.filledQuantity).toBe(2);
   });
 
   it('Ensures orderbook updates', async () => {
-    let res = await request(app).get('/depth').send();
+    const res = await request(app).get('/depth').send();
     console.log('Orderbook state after order:', res.body.depth);
     expect(res.body.depth['1400.9']?.quantity).toBe(8);
   });
