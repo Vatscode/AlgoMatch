@@ -1,45 +1,89 @@
 # AlgoMatch 📈
 
-AlgoMatch is a simple trading algorithm platform that enables users to place orders, view order book depth, and check user balances.
+AlgoMatch is a TypeScript-based trading algorithm platform that enables users to place orders, view order book depth, and check user balances.
 It supports basic trading operations like limit orders for bids and asks and simulates order book matching based on price-time priority.
 
-## Features
+## Features 🚀
 
-- Place limit orders (bids and asks): Users can place buy (bid) and sell (ask) orders with a specified price and quantity.
-- View order book depth: The system allows users to view the current depth of the order book, showing the total quantity of orders at each price level.
+- **Place limit orders (bids and asks)**: Users can place buy (bid) and sell (ask) orders with a specified price and quantity
+- **View order book depth**: See the current depth of the order book, showing total quantity at each price level
+- **Check user balances**: View balances for the traded stock (GOOGLE) and USD
+- **Automatic order matching**: Orders are matched based on price-time priority algorithm
 
-- Check user balances for a specific stock and USD: Users can check their balances for the traded stock (e.g., Google) and their USD balance.
+### Order Matching Logic
 
-- Simulate order matching: Orders are matched automatically based on price and quantity.
+- Bid orders (buy) are matched with ask orders (sell) at the best available price
+- Price-Time Priority:
+  - Better prices are matched first (lower ask price or higher bid price)
+  - At same price level, older orders are matched first (FIFO)
+- Real-time balance updates after trades
 
-- Bid orders (buy) are matched with ask orders (sell) at the best available price (lowest for asks, highest for bids).
+## Tech Stack 💻
 
-- Orders are matched using a price-time priority algorithm:
+- **Language**: TypeScript
+- **Runtime**: Node.js
+- **Framework**: Express.js
+- **Testing**: Jest with Supertest
+- **Type Safety**: Full TypeScript implementation with interfaces and type checking
 
-- Orders at better prices are matched first (e.g., lower ask price or higher bid price).
-
-- Orders at the same price level are matched based on the first-in, first-out (FIFO) rule (older orders are matched first).
-
-## Installation
+## Installation 🛠️
 
 1. Clone the repository:
    ```bash
    git clone https://github.com/Vatscode/AlgoMatch.git
    cd AlgoMatch
+   ```
 
-2. Install the required dependencies:
+2. Install dependencies:
    ```bash
    npm install
+   ```
 
-  3. Running the Project
-     ```bash
-     npm start
+## Development 👩‍💻
 
-   - This will start the Express server and the trading system will be live! 🚀
+Run in development mode with auto-reloading:
+```bash
+npm run dev
+```
 
-# Passes all tests 😊
+Build the TypeScript code:
+```bash
+npm run build
+```
+
+Start the production server:
+```bash
+npm start
+```
+
+## Testing 🧪
+
+Run the test suite:
+```bash
+npm test
+```
+
+Watch mode for development:
+```bash
+npm run test:watch
+```
+
+## API Endpoints 🌐
+
+- `POST /order`: Place a new limit order
+- `GET /depth`: Get current order book depth
+- `GET /balance/:userId`: Get user balance
+- `GET /quote`: Get current quote (TODO)
+
+All endpoints are fully typed with TypeScript interfaces for request/response handling.
+
+## Test Coverage ✅
 
 ![CAFD19BF-91F8-466D-ABF7-16F89156FA55](https://github.com/user-attachments/assets/041794a2-a0e0-49b3-916d-823bf76f3200)
+
+## License
+
+ISC
 
 
    
